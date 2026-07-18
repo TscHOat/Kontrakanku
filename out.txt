@@ -1,0 +1,20 @@
+[36mvite v8.1.4 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 4 modules transformed.
+[31m✗[39m Build failed in 27ms
+[31merror during build:
+[31mBuild failed with 1 error:
+
+[31m[rolldown:vite-resolve] [0mplugin `rolldown:vite-resolve` threw an error
+
+Caused by:
+    "./css" is not exported under the conditions ["module", "browser", "production", "import"] from package D:/iseng/Kontrakanku\node_modules\konsta (see exports field in D:/iseng/Kontrakanku\node_modules\konsta\package.json)
+[31m
+    at aggregateBindingErrorsIntoJsError (file:///D:/iseng/Kontrakanku/node_modules/rolldown/dist/shared/error-BHRSI0R7.mjs:48:18)
+    at unwrapBindingResult (file:///D:/iseng/Kontrakanku/node_modules/rolldown/dist/shared/error-BHRSI0R7.mjs:18:128)
+    at #build (file:///D:/iseng/Kontrakanku/node_modules/rolldown/dist/shared/rolldown-build-CtPvmZgJ.mjs:3276:34)
+    at async buildEnvironment (file:///D:/iseng/Kontrakanku/node_modules/vite/dist/node/chunks/node.js:33011:66)
+    at async Object.build (file:///D:/iseng/Kontrakanku/node_modules/vite/dist/node/chunks/node.js:33433:19)
+    at async Object.buildApp (file:///D:/iseng/Kontrakanku/node_modules/vite/dist/node/chunks/node.js:33430:153)
+    at async CAC.<anonymous> (file:///D:/iseng/Kontrakanku/node_modules/vite/dist/node/cli.js:776:3) {
+  errors: [Getter/Setter]
+}[39m

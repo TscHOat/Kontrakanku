@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #007aff;
+  --color-primary-foreground: #ffffff;
+  --color-background: #f2f2f7;
+  --color-foreground: #000000;
+  --color-card: #ffffff;
+  --color-card-foreground: #000000;
+  --color-muted: #f2f2f7;
+  --color-muted-foreground: #8e8e93;
+  --color-secondary: #f2f2f7;
+  --color-secondary-foreground: #3c3c43;
+  --color-border: #c6c6c8;
+  --color-input: #c6c6c8;
+  --color-destructive: #ff3b30;
+  --color-destructive-foreground: #ffffff;
+  --color-ring: #007aff;
+  --color-accent: #007aff;
+  --color-accent-foreground: #ffffff;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #000000;
+  --color-success: #34c759;
+  --color-success-foreground: #ffffff;
+  --color-warning: #ff9500;
+  --color-warning-foreground: #ffffff;
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+}
+
+:root {
+  --accent: #007aff;
+  --accent-pressed: #005bbf;
+  --red: #ff3b30;
+  --green: #34c759;
+  --orange: #ff9500;
+  --red-bg: #fee2e2;
+  --red-text: #b91c1c;
+  --green-bg: #dcfce7;
+  --green-text: #15803d;
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --fg: #000000;
+  --fg-secondary: #3c3c43;
+  --fg-tertiary: #8e8e93;
+  --border: #c6c6c8;
+  --separator: rgba(60, 60, 67, 0.12);
+  --status-bar: 20px;
+  --navbar-height: 44px;
+  --tab-bar: 50px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.bottom-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* iOS-style status bar simulation (visible on home screen PWA) */
+.status-bar {
+  height: var(--status-bar);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+/* Section heading — iOS grouped list style */
+.section-head {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 16px 6px;
+}
+
+/* Card shadow — prototype */
+.card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
