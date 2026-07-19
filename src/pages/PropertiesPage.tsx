@@ -4,6 +4,8 @@ import useProperties from '@/stores/useProperties'
 import PropertyCard from '@/components/properties/PropertyCard'
 import EmptyState from '@/components/ui/EmptyState'
 import ErrorNotice from '@/components/ui/ErrorNotice'
+import { PlusIcon } from 'lucide-react'
+import { Button } from '@base-ui/react'
 
 export default function PropertiesPage() {
   const { items, loading, error, fetch } = useProperties()
@@ -46,13 +48,13 @@ export default function PropertiesPage() {
       </div>
 
       {/* FAB */}
-      <button
+      <Button
         onClick={() => navigate('/property/new')}
-        className="fixed bottom-20 right-4 z-[50] flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent)] text-2xl text-white shadow-[0_4px_12px_rgba(0,122,255,0.3)] active:scale-95"
+        className="fixed bottom-20 right-4 z-[50] rounded-full h-14 w-14 bg-[var(--accent)] text-2xl text-white shadow-[0_4px_12px_rgba(0,122,255,0.3)] active:scale-95 flex items-center justify-center hover:bg-[var(--accent-pressed)]"
         aria-label="Tambah kontrakan"
       >
-        +
-      </button>
+        <PlusIcon />
+      </Button>
     </div>
   )
 }

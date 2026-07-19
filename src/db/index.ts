@@ -61,6 +61,9 @@ export async function initSQLite() {
   sqliteDb.run(`CREATE INDEX IF NOT EXISTS idx_payments_tenant_id ON payments(tenant_id);`)
   sqliteDb.run(`CREATE INDEX IF NOT EXISTS idx_payments_for_month ON payments(for_month);`)
   sqliteDb.run(`CREATE INDEX IF NOT EXISTS idx_maintenances_property_id ON maintenances(property_id);`)
+
+  // Initial persist request (sering ditolak iOS karena bukan user gesture)
+  await requestPersistentStorage()
 }
 
 export async function persistDB() {
@@ -95,6 +98,23 @@ export async function importSQLite(data: Uint8Array) {
   sqliteDb = new SQLCtor.Database(data)
   db = drizzle(sqliteDb)
   await persistDB()
+}
+
+/**
+ * Request persistent storage. Panggil dari user gesture (tap/click)
+ * agar iOS lebih mungkin grant.
+ */
+export async function requestPersistentStorage() {
+  if (typeof navigator !== 'undefined' && 'storage' in navigator && 'persist' in navigator.storage) {
+    try {
+      const persisted = await navigator.storage.persist()
+      if (!persisted) {
+        console.warn('Storage persist denied — data mungkin dievict iOS dlm 7 hari.')
+      }
+      return persisted
+    } catch { /* not supported */ }
+  }
+  return false
 }
 
 // Migrate legacy localStorage data → IndexedDB

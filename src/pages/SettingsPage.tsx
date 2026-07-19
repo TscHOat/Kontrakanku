@@ -96,6 +96,14 @@ export default function SettingsPage() {
 
   return (
     <div>
+      {/* iOS data loss warning */}
+      <div className="px-4 pb-2">
+        <div className="rounded-[10px] bg-[var(--orange)]/10 border border-[var(--orange)]/30 px-4 py-3 text-[13px] text-[var(--orange)]">
+          ⚠️ <strong>iOS note:</strong> Safari hapus data PWA jika 7 hari tidak dibuka.
+          Backup rutin untuk amankan data.
+        </div>
+      </div>
+
       <GroupedList title="Data">
         <RowBtn onClick={() => { setLoading('json-export'); handleExportJSON() }} disabled={loading !== null}>
           {loading === 'json-export' ? <Spinner /> : '📤'} Export JSON

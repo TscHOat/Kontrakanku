@@ -1,21 +1,29 @@
-import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { eq } from 'drizzle-orm'
-import { getDB } from '@/db'
-import { properties, payments } from '@/db/schema'
-import useProperties from '@/stores/useProperties'
-import type { PropertyWithVacant } from '@/stores/useProperties'
-import useTenants from '@/stores/useTenants'
-import useMaintenances from '@/stores/useMaintenances'
+import MaintenanceForm from '@/components/maintenances/MaintenanceForm'
 import TenantCard from '@/components/tenants/TenantCard'
+import { Button } from '@/components/ui/button'
+import { Button as BaseButton } from '@base-ui/react'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import EmptyState from '@/components/ui/EmptyState'
 import ErrorNotice from '@/components/ui/ErrorNotice'
-import ConfirmDialog from '@/components/ui/ConfirmDialog'
-import MaintenanceForm from '@/components/maintenances/MaintenanceForm'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { getDB } from '@/db'
+import { payments, properties } from '@/db/schema'
 import { monthLabel } from '@/lib/date'
+import useMaintenances from '@/stores/useMaintenances'
+import type { PropertyWithVacant } from '@/stores/useProperties'
+import useProperties from '@/stores/useProperties'
+import useTenants from '@/stores/useTenants'
 import type { Maintenance, NewMaintenance } from '@/types'
+import { eq } from 'drizzle-orm'
+import {
+  PlusIcon
+} from "lucide-react"
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+interface PaidMonth {
+  forMonth: string
+  tenantId: number
+}
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
@@ -26,7 +34,7 @@ export default function PropertyDetailPage() {
   const { items: tenantList, loading, error, fetch: fetchTenants } = useTenants()
   const [property, setProperty] = useState<PropertyWithVacant | null>(null)
   const [search, setSearch] = useState('')
-  const [paidMonths, setPaidMonths] = useState<Set<string>>(new Set())
+  const [paidMonths, setPaidMonths] = useState<PaidMonth[]>([])
   const [showDelete, setShowDelete] = useState(false)
   const [showMForm, setShowMForm] = useState(false)
   const [editM, setEditM] = useState<Maintenance | null>(null)
@@ -44,7 +52,7 @@ export default function PropertyDetailPage() {
   const [mSaving, setMSaving] = useState(false)
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       // ensure properties loaded for vacant count
       if (storeItems.length === 0) await fetchProperties()
       const found = storeItems.find((p) => p.id === propertyId)
@@ -77,21 +85,14 @@ export default function PropertyDetailPage() {
 
   // fetch payment status for all tenants in this property
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (tenantList.length === 0) return
       const db = await getDB()
-      const tIds = tenantList.map((t) => t.id)
       const rows = await db
         .select({ forMonth: payments.forMonth, tenantId: payments.tenantId })
         .from(payments)
         .all()
-      const paid = new Set<string>()
-      for (const r of rows) {
-        if (tIds.includes(r.tenantId)) {
-          paid.add(`${r.tenantId}-${r.forMonth}`)
-        }
-      }
-      setPaidMonths(paid)
+      setPaidMonths(rows)
     })()
   }, [tenantList])
 
@@ -177,9 +178,7 @@ export default function PropertyDetailPage() {
           <TenantCard
             key={t.id}
             tenant={t}
-            paidMonths={new Set(
-              Array.from(paidMonths).filter((pm) => pm.startsWith(`${t.id}-`))
-            )}
+            paidMonths={paidMonths.filter((p) => p.tenantId === t.id)}
             currentMonth={currentMonth}
           />
         ))}
@@ -194,11 +193,10 @@ export default function PropertyDetailPage() {
             <button
               key={f}
               onClick={() => setMFilter(f)}
-              className={`rounded-[10px] px-3 py-1.5 text-[13px] font-medium ${
-                mFilter === f
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--surface)] text-[var(--fg-secondary)] border-[0.5px] border-[var(--border)]'
-              }`}
+              className={`rounded-[10px] px-3 py-1.5 text-[13px] font-medium ${mFilter === f
+                ? 'bg-[var(--accent)] text-white'
+                : 'bg-[var(--surface)] text-[var(--fg-secondary)] border-[0.5px] border-[var(--border)]'
+                }`}
             >
               {f === 'all' ? 'Semua' : f === 'pending' ? 'Pending' : 'Selesai'}
             </button>
@@ -239,11 +237,10 @@ export default function PropertyDetailPage() {
                         <div className="flex items-center gap-2">
                           <p className="text-[15px] font-medium text-[var(--fg)]">{m.title}</p>
                           <span
-                            className={`rounded-full px-[10px] py-[3px] text-[12px] font-medium ${
-                              m.status === 'done'
-                                ? 'bg-[var(--green-bg)] text-[var(--green-text)]'
-                                : 'bg-[rgba(255,149,0,0.15)] text-[var(--orange)]'
-                            }`}
+                            className={`rounded-full px-[10px] py-[3px] text-[12px] font-medium ${m.status === 'done'
+                              ? 'bg-[var(--green-bg)] text-[var(--green-text)]'
+                              : 'bg-[rgba(255,149,0,0.15)] text-[var(--orange)]'
+                              }`}
                           >
                             {m.status === 'done' ? 'Selesai' : 'Pending'}
                           </span>
@@ -260,9 +257,8 @@ export default function PropertyDetailPage() {
                           onClick={() => toggleMStatus(m.id)}
                           variant="ghost"
                           size="xs"
-                          className={`h-auto px-1 text-[13px] ${
-                            m.status === 'done' ? 'text-[var(--orange)]' : 'text-[var(--green)]'
-                          }`}
+                          className={`h-auto px-1 text-[13px] ${m.status === 'done' ? 'text-[var(--orange)]' : 'text-[var(--green)]'
+                            }`}
                         >
                           {m.status === 'done' ? 'Pending' : 'Selesai'}
                         </Button>
@@ -321,13 +317,13 @@ export default function PropertyDetailPage() {
       )}
 
       {/* FAB */}
-      <button
+      <BaseButton
         onClick={() => navigate(`/property/${propertyId}/tenant/new`)}
-        className="fixed bottom-20 right-4 z-[50] flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent)] text-2xl text-white shadow-[0_4px_12px_rgba(0,122,255,0.3)] active:scale-95"
+        className="fixed bottom-20 right-4 z-[50] rounded-full h-14 w-14 bg-[var(--accent)] text-2xl text-white shadow-[0_4px_12px_rgba(0,122,255,0.3)] active:scale-95 flex items-center justify-center hover:bg-[var(--accent-pressed)]"
         aria-label="Tambah penyewa"
       >
-        +
-      </button>
+        <PlusIcon />
+      </BaseButton>
 
       <ConfirmDialog
         open={showDelete}

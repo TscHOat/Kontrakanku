@@ -3,15 +3,21 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import type { Tenant } from '@/types'
 
+interface PaidMonth {
+  forMonth: string
+  tenantId: number
+}
 interface TenantCardProps {
   tenant: Tenant
-  paidMonths: Set<string>
+  paidMonths: PaidMonth[]
   currentMonth: string
 }
 
+
+
 export default function TenantCard({ tenant, paidMonths, currentMonth }: TenantCardProps) {
   const navigate = useNavigate()
-  const isPaid = paidMonths.has(currentMonth)
+  const isPaid = paidMonths.some((p) => p.forMonth === currentMonth)
 
   return (
     <Card
@@ -28,9 +34,8 @@ export default function TenantCard({ tenant, paidMonths, currentMonth }: TenantC
         </div>
         <Badge
           variant={isPaid ? 'default' : 'destructive'}
-          className={`rounded-full px-[10px] py-[3px] text-[12px] ${
-            isPaid ? 'bg-[var(--green-bg)] text-[var(--green-text)] hover:bg-[var(--green-bg)]' : ''
-          }`}
+          className={`rounded-full px-[10px] py-[3px] text-[12px] ${isPaid ? 'bg-[var(--green-bg)] text-[var(--green-text)] hover:bg-[var(--green-bg)]' : ''
+            }`}
         >
           {isPaid ? 'Lunas' : 'Belum'}
         </Badge>

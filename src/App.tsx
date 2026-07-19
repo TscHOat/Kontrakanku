@@ -1,8 +1,9 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
 import LoadingScreen from './pages/LoadingScreen'
 import useDB from './hooks/useDB'
+import { requestPersistentStorage } from './db'
 
 const PropertiesPage = lazy(() => import('./pages/PropertiesPage'))
 const PropertyFormPage = lazy(() => import('./pages/PropertyFormPage'))
@@ -13,6 +14,17 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 
 export default function App() {
   const { dbReady } = useDB()
+
+  // Re-request persistent storage dari user gesture (iOS grant)
+  useEffect(() => {
+    const handler = () => {
+      requestPersistentStorage()
+      // cleanup — cukup sekali
+      document.removeEventListener('pointerdown', handler, true)
+    }
+    document.addEventListener('pointerdown', handler, { capture: true, once: true })
+    return () => document.removeEventListener('pointerdown', handler, true)
+  }, [])
 
   if (!dbReady) return <LoadingScreen />
 
